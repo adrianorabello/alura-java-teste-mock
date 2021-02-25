@@ -59,6 +59,8 @@ class FinalizarLeilaoServiceTest {
         service.finalizarLeiloesExpirados();
         Leilao leilao = leiloes.get(0);
         Lance lanceVencedor = leilao.getLanceVencedor();
+
+        /** verify if enviadorDeEmails sent e-mail for lanceVecedor */
         Mockito.verify(enviadorDeEmails).enviarEmailVencedorLeilao(lanceVencedor);
     }
 
@@ -69,10 +71,12 @@ class FinalizarLeilaoServiceTest {
         List<Leilao> leiloes = leiloes();
         Mockito.when(leilaoDao.buscarLeiloesExpirados()).thenReturn(leiloes);
 
+        /** thows a exception whem leilaoDao is Called */
         Mockito.when(leilaoDao.salvar(Mockito.any())).thenThrow(RuntimeException.class);
 
         try {
             service.finalizarLeiloesExpirados();
+            /** verify if no interactosn with Mock enviadorDeEmails*/
             Mockito.verifyNoInteractions(enviadorDeEmails);
 
         } catch (Exception ex) {
